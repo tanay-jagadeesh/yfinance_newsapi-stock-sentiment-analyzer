@@ -26,4 +26,6 @@ def extract_news():
             "content": article['content']
         }
         article_list.append(data)
+    df = pd.DataFrame(article_list)
+    df.to_csv('stock_data.csv')
     return article_list
