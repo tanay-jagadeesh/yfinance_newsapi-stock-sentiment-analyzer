@@ -5,7 +5,7 @@ from datetime import datetime
 import requests
 import config 
 
-response = requests.get(f"https://newsapi.org/v2/everything?q=Apple&apiKey={config.API_KEY}")
+response = requests.get(f"https://newsapi.org/v2/everything?q=Apple&pageSize=20&apiKey={config.API_KEY}")
 
 # Error Handling to see if it prints json
 try:
