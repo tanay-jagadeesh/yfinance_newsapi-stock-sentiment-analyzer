@@ -1,0 +1,7 @@
+praw
+pandas
+nltk
+textblob
+streamlit
+matplotlib
+seaborn
