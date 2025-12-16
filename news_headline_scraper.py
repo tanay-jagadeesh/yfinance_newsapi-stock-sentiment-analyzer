@@ -24,6 +24,7 @@ ticker_symbols = {
     "UNH": "UnitedHealth OR United Health",
     "DIS": "Disney"
 }
+article_list = []
 for key in ticker_symbols:
     response = requests.get(f"https://newsapi.org/v2/everything?q={ticker_symbols[key]}&pageSize=20&apiKey={config.API_KEY}")
 
@@ -36,7 +37,6 @@ for key in ticker_symbols:
 
     """Extracts News from Api"""
 def extract_news():
-    article_list = []
     for article in response.json()['articles']:
         data = {
             "ticker": key,
