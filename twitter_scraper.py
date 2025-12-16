@@ -1,5 +1,5 @@
 # Twitter Sentiment Analyzer for Stock Mentions
-# Day 1-2: Set up Reddit scraping
+# Day 1-2: Set up Twitter scraping
 
 import praw
 import pandas as pd
@@ -7,9 +7,7 @@ from datetime import datetime
 import tweepy
 import config
 
-def main():
-    # TODO: Test connection with simple script
-    pass
+client = tweepy.Client(bearer_token = config.BEARER_TOKEN)
 
-if __name__ == "__main__":
-    main()
+def search_tweets():
+    response = client.search_recent_tweets(query = "$AAPL OR $TSLA OR $GOOGL", max_results = 10)
