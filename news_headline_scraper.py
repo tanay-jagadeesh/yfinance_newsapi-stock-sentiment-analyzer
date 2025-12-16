@@ -55,8 +55,10 @@ for key in ticker_symbols:
         response.raise_for_status()
         print(response.json())
     except requests.exceptions.HTTPError as e:
-        print(f"HTTP error: {e}")
-
+        if response.status_code == 429:
+            print(f"You have reached your rate limit")
+        else:
+            print(f"HTTP error: {e}")
     extract_news()
 
 df = pd.DataFrame(article_list)
