@@ -3,36 +3,7 @@
 import pandas as pd
 from datetime import datetime
 import requests
-import config 
-
-response = requests.get(f"https://newsapi.org/v2/everything?q=Apple&pageSize=20&apiKey={config.API_KEY}")
-
-# Error Handling to see if it prints json
-try:
-    response.raise_for_status()
-    print(response.json())
-except requests.exceptions.HTTPError as e:
-    print(f"HTTP error: {e}")
-
-"""Extracts News from Api"""
-def extract_news():
-    article_list = []
-    for article in response.json()['articles']:
-        data = {
-            "source": article['source'],
-            "title": article['title'],
-            "author": article['author'],
-            "description": article['description'],
-            "url": article['url'],
-            "publishedAt": article['publishedAt'],
-            "content": article['content']
-        }
-        article_list.append(data)
-    df = pd.DataFrame(article_list)
-    df.to_csv('news_data.csv')
-    return article_list
-
-extract_news()
+import config
 
 stocks_in_demand = ["AAPL", "GOOGL", "MSFT", "TSLA", "META", "NVDA", "AMZN", "JPM", "BAC", "GS", "V", "WMT", "JNJ", "UNH", "DIS"]
 
@@ -53,3 +24,33 @@ ticker_symbols = {
     "UNH": "UnitedHealth OR United Health",
     "DIS": "Disney"
 }
+for key in ticker_symbols:
+    response = requests.get(f"https://newsapi.org/v2/everything?q={ticker_symbols[key]}&pageSize=20&apiKey={config.API_KEY}")
+
+    # Error Handling to see if it prints json
+    try:
+        response.raise_for_status()
+        print(response.json())
+    except requests.exceptions.HTTPError as e:
+        print(f"HTTP error: {e}")
+
+    """Extracts News from Api"""
+def extract_news():
+    article_list = []
+    for article in response.json()['articles']:
+        data = {
+            "ticker": key,
+            "source": article['source'],
+            "title": article['title'],
+            "author": article['author'],
+            "description": article['description'],
+            "url": article['url'],
+            "publishedAt": article['publishedAt'],
+            "content": article['content']
+        }
+        article_list.append(data)
+    df = pd.DataFrame(article_list)
+    df.to_csv('news_data.csv')
+    return article_list
+
+extract_news() 
