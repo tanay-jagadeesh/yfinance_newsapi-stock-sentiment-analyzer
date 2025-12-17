@@ -19,8 +19,8 @@ c.execute("""CREATE TABLE IF NOT EXISTS stock_prices (
           )      
 """)
 
-start_date = '2024-01-01'
-end_date = '2025-01-01'
+start_date = '2025-12-01'
+end_date = '2025-12-17'
 
 def stock_prices():
     for ticker in ticker_symbols:
