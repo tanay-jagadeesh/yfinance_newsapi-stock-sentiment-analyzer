@@ -26,4 +26,10 @@ c.execute("""CREATE TABLE stocks (
 )  
 """)
 
+def insert_article(ticker, title, description, content, source, published_at, url, author):
+    c.execute("INSERT INTO articles(ticker, title, description, content, source, published_at, url, author) VALUES(?, ?, ?, ?, ?, ?, ?, ?)",
+              (ticker, title, description, content, source, published_at, url, author))
+
 conn.commit()
+
+conn.close()
