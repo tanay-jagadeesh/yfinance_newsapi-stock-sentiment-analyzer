@@ -7,15 +7,6 @@ conn = sqlite3.connect('stock_value.db')
 
 c = conn.cursor()
 
-start_date = '2024-01-01'
-end_date = '2025-01-01'
-
-def stock_prices():
-    for ticker in ticker_symbols:
-        stock = yf.Ticker(ticker)
-        data = yf.download(ticker, start = start_date, end = end_date, interval = '1d')
-stock_prices()
-
 c.execute("""CREATE TABLE IF NOT EXISTS stock_prices (
     ticker TEXT,
     date TEXT,
@@ -28,6 +19,13 @@ c.execute("""CREATE TABLE IF NOT EXISTS stock_prices (
           )      
 """)
 
+start_date = '2024-01-01'
+end_date = '2025-01-01'
+
+def stock_prices():
+    for ticker in ticker_symbols:
+        data = yf.download(ticker, start = start_date, end = end_date, interval = '1d')
+stock_prices()
 
 conn.commit()
 conn.close()
