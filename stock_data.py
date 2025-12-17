@@ -12,7 +12,7 @@ end_date = '2025-01-01'
 
 def stock_prices():
     for ticker in ticker_symbols:
-        ticker = yf.Ticker(ticker)
+        stock = yf.Ticker(ticker)
         data = yf.download(ticker, start = start_date, end = end_date, interval = '1d')
 stock_prices()
 
