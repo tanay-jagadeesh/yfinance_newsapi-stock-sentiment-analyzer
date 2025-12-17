@@ -36,7 +36,6 @@ stocks_df['date'] = stocks_df['date'].str[:10]
 # Now merge them by ticker AND date
 merged_df = articles_df.merge(stocks_df, on=['ticker', 'date'], how='inner')
 
-# See what you got
 print(f"Found {len(merged_df)} matches!")
 print(merged_df.head())
 
