@@ -71,6 +71,23 @@ print(daily_stats.head())
 
 daily_stats['next_day_change'] = (daily_stats.groupby('ticker')['close_price'].shift(-1)- daily_stats['close_price']) / daily_stats['close_price'] * 100
 
+# 1. Check for null values
+print("\nNull values per column:")
+print(daily_stats.isnull().sum())
+
+# 2. Check data types
+print("\nData types:")
+print(daily_stats.dtypes)
+
+# 3. Basic statistics
+print("\nBasic statistics:")
+print(daily_stats.describe())
+
+# 4. Date range
+print(f"\nDate range: {daily_stats['date'].min()} to {daily_stats['date'].max()}")
+print(f"Number of unique dates: {daily_stats['date'].nunique()}")
+print(f"Number of unique tickers: {daily_stats['ticker'].nunique()}")
+
 daily_stats.to_csv('daily_stats.csv', index=False)
 
 print(f"\nSaved {len(daily_stats)} rows to daily_stats.csv")
