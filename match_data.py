@@ -71,7 +71,9 @@ print(daily_stats.head())
 
 daily_stats['next_day_change'] = (daily_stats.groupby('ticker')['close_price'].shift(-1)- daily_stats['close_price']) / daily_stats['close_price'] * 100
 
-daily_stats.to_csv('daily_stats.csv')
+daily_stats.to_csv('daily_stats.csv', index=False)
+
+print(f"\nSaved {len(daily_stats)} rows to daily_stats.csv")
 
 conn.commit()
 
