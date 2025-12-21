@@ -28,6 +28,16 @@ print("Stock date: ", just_stock_date)
 # Load articles into DataFrame
 articles_df = pd.read_sql_query("SELECT * FROM articles", conn)
 
+def cleaned(txt):
+    url = remove_url(txt)
+    white = remove_whitespace(url)
+    special = remove_special_characters(white)
+    lower = lowercase(special)
+    return lower
+
+articles_df['combined_text'] = articles_df['title'] + ' ' + articles_df['description']
+articles_df['cleaned_text'] = articles_df['combined_text'].apply(cleaned)
+
 # Load stock prices into DataFrame  
 stocks_df = pd.read_sql_query("SELECT * FROM stock_prices", conn2)
 
@@ -99,15 +109,6 @@ analyzer = SentimentIntensityAnalyzer()
 headline = "Apple stock surges to record high on strong earnings"
 scores = analyzer.polarity_scores(headline)
 print(scores)
-
-def cleaned(txt):
-    url = remove_url(txt)
-    white = remove_whitespace(url)
-    special = remove_special_characters(white)
-    lower = lowercase(special)
-    return lower
-
-articles_df['cleaned_text'] = articles_df['title'].apply(cleaned)
 
 conn.commit()
 
