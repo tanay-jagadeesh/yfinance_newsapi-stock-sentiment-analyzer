@@ -100,6 +100,12 @@ headline = "Apple stock surges to record high on strong earnings"
 scores = analyzer.polarity_scores(headline)
 print(scores)
 
+def cleaned(txt):
+    url = remove_url(txt)
+    white = remove_whitespace(url)
+    special = remove_special_characters(white)
+    lower = lowercase(special)
+    return lower
 
 conn.commit()
 
