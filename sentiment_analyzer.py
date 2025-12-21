@@ -2,6 +2,7 @@ import sqlite3
 import pandas as pd
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 from text_processor import remove_url, remove_special_characters, lowercase, remove_whitespace
+from match_data import cleaned
 
 # Connect to database
 conn = sqlite3.connect('news.sentiment.db')
@@ -11,5 +12,5 @@ articles_df = pd.read_sql_query("SELECT * FROM articles", conn)
 
 
 analyzer = SentimentIntensityAnalyzer()
-scores = analyzer.polarity_scores([articles_df['title'] for title in articles_df])
-print(scores)
+articles_df['combined_scores'] = (articles_df['title'] + ' ' + articles_df['description']).apply(cleaned)
+

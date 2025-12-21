@@ -32,7 +32,7 @@ ticker_symbols = {
 }
 
 """Extracts News from Api"""
-def extract_news():
+def extract_news(response, key):
     for article in response.json()['articles']:
         data = {
             "ticker": key,
@@ -53,13 +53,12 @@ for key in ticker_symbols:
     # Error Handling to see if it prints json
     try:
         response.raise_for_status()
-        print(response.json())
+        extract_news(response, key)
     except requests.exceptions.HTTPError as e:
         if response.status_code == 429:
-            print(f"You have reached your rate limit")
+            print(f"You have reached your rate limit for {key}")
         else:
-            print(f"HTTP error: {e}")
-    extract_news()
+            print(f"HTTP error for {key}: {e}")
 
 df = pd.DataFrame(article_list)
-df.to_csv('news_data.csv') 
+df.to_csv('news_data.csv', index=False)
