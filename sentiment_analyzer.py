@@ -41,3 +41,5 @@ def classify_sentiment(compound):
         return "neutral"
 
 articles_df['classify'] = articles_df['compound'].apply(classify_sentiment)
+
+print(articles_df[['title', 'compound', 'classify']].head(10))
