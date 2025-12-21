@@ -10,3 +10,6 @@ conn = sqlite3.connect('news.sentiment.db')
 articles_df = pd.read_sql_query("SELECT * FROM articles", conn)
 
 
+analyzer = SentimentIntensityAnalyzer()
+scores = analyzer.polarity_scores([articles_df['title'] for title in articles_df])
+print(scores)

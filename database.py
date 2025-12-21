@@ -43,8 +43,6 @@ def query_article(ticker, from_date, to_date):
     (ticker, from_date, to_date))
     return c.fetchall()
 
-conn.commit()
-
 for i, row in df.iterrows():
     try:
         insert_article(row['ticker'], row['title'], row['description'], row['content'], str(row['source']), row['publishedAt'], row['url'], row['author'])

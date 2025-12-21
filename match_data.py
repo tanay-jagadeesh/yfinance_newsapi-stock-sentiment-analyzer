@@ -6,36 +6,17 @@ from text_processor import remove_url, remove_special_characters, lowercase, rem
 conn = sqlite3.connect('news.sentiment.db')
 conn2 = sqlite3.connect('stock_value.db')
 
-c = conn.cursor()
-c2 = conn2.cursor()
-
-c.execute("SELECT * FROM articles ")
-article = c.fetchone()
-
-# The published_at is at index 6
-published_at = article[6]
-print("Full timestamp:", published_at)
-
-# Extract just the date (first 10 characters)
-just_date = published_at[:10]
-print("Just the date:", just_date)
-
-c2.execute("SELECT * FROM stock_prices ")
-stock_price = c2.fetchone()
-just_stock_date = stock_price[1]
-print("Stock date: ", just_stock_date)
-
 # Load articles into DataFrame
 articles_df = pd.read_sql_query("SELECT * FROM articles", conn)
 
 def cleaned(txt):
     url = remove_url(txt)
-    white = remove_whitespace(url)
-    special = remove_special_characters(white)
+    special = remove_special_characters(url)
     lower = lowercase(special)
-    return lower
+    white = remove_whitespace(lower)
+    return white
 
-articles_df['combined_text'] = articles_df['title'] + ' ' + articles_df['description']
+articles_df['combined_text'] = (articles_df['title'].fillna('') + ' ' + articles_df['description'].fillna(''))
 articles_df['cleaned_text'] = articles_df['combined_text'].apply(cleaned)
 
 # Load stock prices into DataFrame  
@@ -110,6 +91,5 @@ headline = "Apple stock surges to record high on strong earnings"
 scores = analyzer.polarity_scores(headline)
 print(scores)
 
-conn.commit()
-
 conn.close()
+conn2.close()
