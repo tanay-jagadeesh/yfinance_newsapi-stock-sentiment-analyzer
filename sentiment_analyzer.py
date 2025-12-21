@@ -19,3 +19,7 @@ def get_sentiments(txt):
     return scores 
 
 articles_df['vader_sentiment'] = articles_df['combined_scores'].apply(get_sentiments)
+
+print(f"Sentiment Scores: {articles_df['vader_sentiment']}")
+
+articles_df['neg'] = articles_df['vader_sentiment'].apply(lambda x: x['neg'])
