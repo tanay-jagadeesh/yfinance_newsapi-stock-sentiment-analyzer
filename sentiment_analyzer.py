@@ -110,3 +110,22 @@ plt.show()
 volatility = articles_df.groupby('ticker')['compound'].std()
 
 print(f"The stocks with the most volatility are {volatility.sort(ascending = False)}")
+
+# Calculating correlations
+
+# Sort by ticker and date to ensure proper order
+daily_stats = daily_stats.sort_values(['ticker', 'date'])
+
+# Calculate next day price change (as percentage)
+daily_stats['next_day_change'] = daily_stats.groupby('ticker')['close_price'].pct_change().shift(-1)
+
+# Count articles per day
+article_volume = articles_df.groupby(['ticker', 'date']).size().reset_index(name='article_count')
+
+# Merge them together
+combined_data = daily_stats.merge(article_volume, on=['ticker', 'date'], how='left')
+combined_data['article_count'] = combined_data['article_count'].fillna(0)
+
+# Calculate correlation between article volume and next-day price change
+correlation = combined_data['article_count'].corr(combined_data['next_day_change'])
+print(f"Correlation between article volume and next-day price change: {correlation}")
