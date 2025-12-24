@@ -61,4 +61,9 @@ articles_df['date'] = articles_df['published_at'].str[:10]
 daily_sentiment = articles_df.groupby(['ticker','date'])['compound'].mean()
 
 momentum = daily_sentiment - daily_sentiment.shift(3)
+
 print(momentum)
+
+momentum_df = momentum.reset_index()
+
+merged_df = articles_df.merge(momentum_df, on=['ticker', 'date'], how='inner')
