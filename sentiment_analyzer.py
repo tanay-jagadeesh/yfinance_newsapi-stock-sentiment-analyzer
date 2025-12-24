@@ -5,6 +5,7 @@ from text_processor import remove_url, remove_special_characters, lowercase, rem
 from match_data import cleaned
 import matplotlib.pyplot as plt
 import seaborn as sns
+from scipy.stats import pearsonr
 
 # Connect to database
 conn = sqlite3.connect('news.sentiment.db')
@@ -110,26 +111,22 @@ plt.show()
 
 volatility = articles_df.groupby('ticker')['compound'].std()
 
-print(f"The stocks with the most volatility are {volatility.sort(ascending = False)}")
+print(f"The stocks with the most volatility are {volatility.sort_values(ascending = False)}")
 
 # Calculating correlations
+
+# Load the daily stats we created earlier
+daily_stats = pd.read_csv('daily_stats.csv')
 
 # Sort by ticker and date to ensure proper order
 daily_stats = daily_stats.sort_values(['ticker', 'date'])
 
-# Calculate next day price change (as percentage)
-daily_stats['next_day_change'] = daily_stats.groupby('ticker')['close_price'].pct_change().shift(-1)
-
-# Count articles per day
-article_volume = articles_df.groupby(['ticker', 'date']).size().reset_index(name='article_count')
-
-# Merge them together
-combined_data = daily_stats.merge(article_volume, on=['ticker', 'date'], how='left')
-combined_data['article_count'] = combined_data['article_count'].fillna(0)
+# The daily_stats already has article_count and next_day_change, so we can use it directly
+combined_data = daily_stats.copy()
 
 # Calculate correlation between article volume and next-day price change
 correlation = combined_data['article_count'].corr(combined_data['next_day_change'])
-print(f"Correlation between article volume and next-day price change: {correlation}")
+print(f"\nCorrelation between article volume and next-day price change: {correlation}")
 
 # 2. Sentiment score to next-day price change
 # Get average daily sentiment per ticker
@@ -156,6 +153,31 @@ combined_data['bullish_pct'] = (combined_data['bullish_count'] / combined_data['
 # Calculate correlation
 bullish_corr = combined_data['bullish_pct'].corr(combined_data['next_day_change'])
 print(f"Correlation between bullish % and next-day price change: {bullish_corr}")
+
+# Statistical significance testing
+# Prepare clean data for p-value testing
+clean_data = combined_data[['article_count', 'avg_sentiment', 'bullish_pct', 'next_day_change']].dropna()
+
+# 1. Article volume vs next-day price change
+corr1, p1 = pearsonr(clean_data['article_count'], clean_data['next_day_change'])
+print(f"\n1. Article Volume vs Next-Day Price Change:")
+print(f"   Correlation: {corr1:.4f}")
+print(f"   P-value: {p1:.4f}")
+print(f"   Significant: {'Yes' if p1 < 0.05 else 'No'}")
+
+# 2. Sentiment score vs next-day price change
+corr2, p2 = pearsonr(clean_data['avg_sentiment'], clean_data['next_day_change'])
+print(f"\n2. Sentiment Score vs Next-Day Price Change:")
+print(f"   Correlation: {corr2:.4f}")
+print(f"   P-value: {p2:.4f}")
+print(f"   Significant: {'Yes' if p2 < 0.05 else 'No'}")
+
+# 3. Bullish % vs next-day price change
+corr3, p3 = pearsonr(clean_data['bullish_pct'], clean_data['next_day_change'])
+print(f"\n3. Bullish % vs Next-Day Price Change:")
+print(f"   Correlation: {corr3:.4f}")
+print(f"   P-value: {p3:.4f}")
+print(f"   Significant: {'Yes' if p3 < 0.05 else 'No'}")
 
 # Create correlation matrix and heatmap
 # Select only the columns we want to correlate
