@@ -52,5 +52,7 @@ print(f"The % bullish articles: {(articles_df['classify'] == "bullish").sum() / 
 
 print(f"The % bearish articles: {(articles_df['classify'] == "bearish").sum() / total}")
 
+print(f"The average compound score for each ticker: {articles_df.groupby('ticker')['compound'].mean()}")
+
 print(f"The % neutral articles: {(articles_df['classify'] == "neutral").sum() / total}")
 
