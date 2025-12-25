@@ -107,12 +107,6 @@ print(f"  Lowest MAE: {comparison_df.loc[comparison_df['MAE'].idxmin(), 'Model']
 # saved results to csv file
 comparison_df.to_csv('model_comparison.csv', index=False)
 
-#Random Forest Classifier model
-
-rfc = RandomForestClassifier()
-rfc.fit(X_train, y_train)
-rfc_predictions = rfc.predict(X_val)
-
 #Gradient Boosting model
 
 gbc = GradientBoostingRegressor()
