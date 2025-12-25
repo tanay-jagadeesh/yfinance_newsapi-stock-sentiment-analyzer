@@ -15,6 +15,12 @@ y_train = pd.read_csv('y_train.csv')
 y_val = pd.read_csv('y_val.csv')
 y_test = pd.read_csv('y_test.csv')
 
+# Drop text columns (can't train on text)
+if 'titles_combined' in X_train.columns:
+    X_train = X_train.drop('titles_combined', axis=1)
+    X_val = X_val.drop('titles_combined', axis=1)
+    X_test = X_test.drop('titles_combined', axis=1)
+
 #created model
 reg_model = LinearRegression()
 
