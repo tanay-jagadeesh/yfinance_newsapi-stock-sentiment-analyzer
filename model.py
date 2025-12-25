@@ -15,11 +15,13 @@ y_train = pd.read_csv('y_train.csv')
 y_val = pd.read_csv('y_val.csv')
 y_test = pd.read_csv('y_test.csv')
 
-# Drop text columns (can't train on text)
-if 'titles_combined' in X_train.columns:
-    X_train = X_train.drop('titles_combined', axis=1)
-    X_val = X_val.drop('titles_combined', axis=1)
-    X_test = X_test.drop('titles_combined', axis=1)
+# Drop text columns (can't train on text) and data leakage columns
+leakage_cols = ['titles_combined', 'close_price', 'price_change_pct', 'price_change']
+cols_to_drop = [col for col in leakage_cols if col in X_train.columns]
+if cols_to_drop:
+    X_train = X_train.drop(cols_to_drop, axis=1)
+    X_val = X_val.drop(cols_to_drop, axis=1)
+    X_test = X_test.drop(cols_to_drop, axis=1)
 
 #created model
 reg_model = LinearRegression()
