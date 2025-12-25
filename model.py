@@ -1,10 +1,13 @@
 import pandas as pd
+import joblib
+import numpy as np
 from sklearn.linear_model import LinearRegression
 from sklearn.tree import DecisionTreeRegressor
 from sklearn.ensemble import RandomForestRegressor, GradientBoostingRegressor
 from sklearn.metrics import mean_squared_error, root_mean_squared_error, r2_score, mean_absolute_error
 from sklearn.model_selection import TimeSeriesSplit
 from xgboost import XGBRegressor
+import matplotlib.pyplot as plt
 
 # Load train/val/test sets
 X_train = pd.read_csv('X_train.csv')
@@ -200,6 +203,70 @@ for train_index, val_index in (tscv.split(X_train)):
     score = r2_score(y_val_fold, model_predictions)
     print(f"XGB Fold score: {score}")
 
-# want to see which performs the best 
+# want to see which performs the best
 best_model = comparison_df.loc[comparison_df['R²'].idxmax(), 'Model']
 print(f"\nOverall Best Model: {best_model}")
+
+# Decision Tree was best model so will train it
+final_model = DecisionTreeRegressor()
+final_model.fit(X_train, y_train)
+
+# Predict on test set
+test_predictions = final_model.predict(X_test)
+
+# Calculate final metrics
+test_mse = mean_squared_error(y_test, test_predictions)
+test_rmse = root_mean_squared_error(y_test, test_predictions)
+test_r2 = r2_score(y_test, test_predictions)
+test_mae = mean_absolute_error(y_test, test_predictions)
+
+print(f"\nFinal Test Metrics:")
+print(f"  MAE: {test_mae:.4f}")
+print(f"  RMSE: {test_rmse:.4f}")
+print(f"  R²: {test_r2:.4f}")
+
+# Save the model
+joblib.dump(final_model, 'stock_sentiment_model.pkl')
+print(f"\nModel saved to stock_sentiment_model.pkl")
+
+# Feature importance (top 3)
+feature_names = X_train.columns
+importances = final_model.feature_importances_
+indices = np.argsort(importances)[::-1]
+
+print(f"\nTop 3 Most Important Features:")
+for i in range(min(3, len(feature_names))):
+    print(f"  {i+1}. {feature_names[indices[i]]}: {importances[indices[i]]:.4f}")
+
+# Visualizations
+
+# 1. Actual vs Predicted
+plt.figure(figsize=(10, 6))
+plt.scatter(y_test, test_predictions, alpha=0.6)
+plt.plot([y_test.min(), y_test.max()], [y_test.min(), y_test.max()], 'r--', lw=2)
+plt.xlabel('Actual')
+plt.ylabel('Predicted')
+plt.title('Actual vs Predicted Stock Prices')
+plt.tight_layout()
+plt.show()
+
+# 2. Residuals plot
+residuals = y_test.values.flatten() - test_predictions
+plt.figure(figsize=(10, 6))
+plt.scatter(test_predictions, residuals, alpha=0.6)
+plt.axhline(y=0, color='r', linestyle='--')
+plt.xlabel('Predicted')
+plt.ylabel('Residuals')
+plt.title('Residual Plot')
+plt.tight_layout()
+plt.show()
+
+# 3. Feature importance plot
+plt.figure(figsize=(10, 6))
+top_n = min(10, len(feature_names))
+plt.barh(range(top_n), importances[indices[:top_n]])
+plt.yticks(range(top_n), [feature_names[i] for i in indices[:top_n]])
+plt.xlabel('Importance')
+plt.title('Top 10 Feature Importances')
+plt.tight_layout()
+plt.show()
