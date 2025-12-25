@@ -2,6 +2,7 @@ import pandas as pd
 from sklearn.linear_model import LinearRegression
 from sklearn.tree import DecisionTreeRegressor
 from sklearn.ensemble import RandomForestRegressor
+from sklearn.metrics import mean_squared_error
 
 # Load train/val/test sets
 X_train = pd.read_csv('X_train.csv')
@@ -30,3 +31,7 @@ dt_predictions = dt_model.predict(X_val)
 rf_model = RandomForestRegressor()
 rf_model.fit(X_train, y_train)
 rf_predictions = rf_model.predict(X_val)
+
+#Mean Squared Errorn for Lin Reg
+mean_squared_error(y_val, reg_model_predictions)
+
