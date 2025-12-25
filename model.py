@@ -123,8 +123,15 @@ xgb_predictions = xgb_model.predict(X_val)
 
 tscv = TimeSeriesSplit(n_splits = 5)
 
+#Random Forest Regressor
 for train_index, val_index in (tscv.split(X_train)):
     X_train_fold = X_train.iloc[train_index]
     y_train_fold = y_train.iloc[train_index]
-    X_val_fold = X_val.iloc[val_index]
-    y_val_fold = y_val.iloc[val_index]
+    X_val_fold = X_train.iloc[val_index]
+    y_val_fold = y_train.iloc[val_index]
+
+    model = RandomForestRegressor()
+
+    model.fit(X_train_fold, y_train_fold)
+
+    model_predictions = model.predict(X_val_fold)
